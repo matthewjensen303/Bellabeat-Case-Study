@@ -1,4 +1,5 @@
 Author: Matthew Jensen 
+
 Date: 3/18/2023
 
 ### Introduction
@@ -138,98 +139,17 @@ on trends within the data for Bellabeat:
 The first step I took is loading in the libraries that I need, then I
 read in the files into R:
 
-``` r
+```{r}
 library(tidyverse)
-```
-
-    ## Warning: package 'tidyverse' was built under R version 4.2.2
-
-    ## ── Attaching packages ─────────────────────────────────────── tidyverse 1.3.2 ──
-    ## ✔ ggplot2 3.4.0      ✔ purrr   0.3.5 
-    ## ✔ tibble  3.1.8      ✔ dplyr   1.0.10
-    ## ✔ tidyr   1.2.1      ✔ stringr 1.4.1 
-    ## ✔ readr   2.1.3      ✔ forcats 0.5.2
-
-    ## Warning: package 'ggplot2' was built under R version 4.2.2
-
-    ## ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
-    ## ✖ dplyr::filter() masks stats::filter()
-    ## ✖ dplyr::lag()    masks stats::lag()
-
-``` r
 library(here)
-```
-
-    ## Warning: package 'here' was built under R version 4.2.2
-
-    ## here() starts at C:/Users/Matthew/Documents/Bellabeat-Case-Study
-
-``` r
 library(skimr)
-```
-
-    ## Warning: package 'skimr' was built under R version 4.2.2
-
-``` r
 library(janitor)
-```
-
-    ## Warning: package 'janitor' was built under R version 4.2.2
-
-    ## 
-    ## Attaching package: 'janitor'
-    ## 
-    ## The following objects are masked from 'package:stats':
-    ## 
-    ##     chisq.test, fisher.test
-
-``` r
 library(lubridate)
-```
-
-    ## 
-    ## Attaching package: 'lubridate'
-    ## 
-    ## The following objects are masked from 'package:base':
-    ## 
-    ##     date, intersect, setdiff, union
-
-``` r
 library(ggrepel)
-```
-
-    ## Warning: package 'ggrepel' was built under R version 4.2.2
-
-``` r
 library(ggplot2)
 library(reshape2)
-```
-
-    ## Warning: package 'reshape2' was built under R version 4.2.2
-
-    ## 
-    ## Attaching package: 'reshape2'
-    ## 
-    ## The following object is masked from 'package:tidyr':
-    ## 
-    ##     smiths
-
-``` r
 library(scales)
 ```
-
-    ## Warning: package 'scales' was built under R version 4.2.2
-
-    ## 
-    ## Attaching package: 'scales'
-    ## 
-    ## The following object is masked from 'package:purrr':
-    ## 
-    ##     discard
-    ## 
-    ## The following object is masked from 'package:readr':
-    ## 
-    ##     col_factor
 
 ``` r
 # read in files
@@ -446,6 +366,9 @@ head(weekday_activity)
     ## 5 Friday          7901.          2330.            743.        6.76
     ## 6 Saturday        9871.          2507.            680.        6.98
 
+
+
+### Analyze
 ``` r
 # average calories in a day
 
@@ -457,7 +380,7 @@ weekday_calories <- ggplot(weekday_activity) +
 weekday_calories
 ```
 
-![](bellabeatgit_files/figure-markdown_github/unnamed-chunk-8-1.png)
+bellabeatgit_files/figure-markdown_github/unnamed-chunk-8-1.png
 
 This graph examines if there is any particular day that people burn the
 most calories. While there isn’t a big difference, Saturday being the
@@ -475,7 +398,7 @@ weekday_steps <- ggplot(weekday_activity) +
 weekday_steps
 ```
 
-![](bellabeatgit_files/figure-markdown_github/unnamed-chunk-9-1.png)
+bellabeatgit_files/figure-markdown_github/unnamed-chunk-9-1.png
 
 This graph plots the relationship between a person’s daily steps with
 each day of the week to show which day has the most activity. This does
@@ -494,7 +417,7 @@ weekday_sleep <- ggplot(weekday_activity) +
 weekday_sleep
 ```
 
-![](bellabeatgit_files/figure-markdown_github/unnamed-chunk-10-1.png)
+bellabeatgit_files/figure-markdown_github/unnamed-chunk-10-1.png
 
 This graph also shows which days of the week people typically sleep the
 most, graphing this can show which day or days people are the most well
@@ -515,7 +438,7 @@ labs(title="Daily Steps vs. Calories Burned", x="Total Steps", y="Calories Burne
 cal_burned
 ```
 
-![](bellabeatgit_files/figure-markdown_github/unnamed-chunk-11-1.png)
+bellabeatgit_files/figure-markdown_github/unnamed-chunk-11-1.png
 
 This graph shows the correlation between the amount of steps a person
 has in a day and how many calories they burn. On average, when they take
@@ -537,7 +460,7 @@ labs(title="Total Steps vs Daily Activity", x="Total Daily Steps", y="Time Activ
 active_steps
 ```
 
-![](bellabeatgit_files/figure-markdown_github/unnamed-chunk-12-1.png)
+bellabeatgit_files/figure-markdown_github/unnamed-chunk-12-1.png
 
 ``` r
 # merge daily activity with hourly steps by the Id and date
@@ -587,7 +510,7 @@ labs(title="Average Steps per Hour", x="Hour", y="Average Steps")
 steps_per_hour
 ```
 
-![](bellabeatgit_files/figure-markdown_github/unnamed-chunk-14-1.png)
+bellabeatgit_files/figure-markdown_github/unnamed-chunk-14-1.png
 
 This graph illustrates the time of day in which people are most active.
 When people are asleep in the early morning there isn’t much activity
@@ -643,7 +566,7 @@ labs(title="Average Calories Burned vs Time of Day", y="Average Calories Burned"
 bar_calories
 ```
 
-![](bellabeatgit_files/figure-markdown_github/unnamed-chunk-16-1.png)
+bellabeatgit_files/figure-markdown_github/unnamed-chunk-16-1.png
 
 This graph illustrates what time of day people are burning the most
 calories. One of the most interesting things is how much people are
@@ -663,7 +586,7 @@ sed_minutes <- ggplot(weekday_activity) +
 sed_minutes
 ```
 
-![](bellabeatgit_files/figure-markdown_github/unnamed-chunk-17-1.png)
+bellabeatgit_files/figure-markdown_github/unnamed-chunk-17-1.png
 
 This graph shows how much time people are sedentay, or not staying
 active during the week. It is spread out evenly, however Tuesday and
@@ -687,7 +610,7 @@ activity_type <- paste(activity_type, "%", sep="")
 pie(slices, labels = activity_type, col = rainbow(length(activity_type)), main = "Percentage of Activity Type in Minutes")
 ```
 
-![](bellabeatgit_files/figure-markdown_github/unnamed-chunk-18-1.png)
+bellabeatgit_files/figure-markdown_github/unnamed-chunk-18-1.png
 
 This graph illustrates how most of the time people are spending is
 sedentary and not doing any activity. Lightly active is the type of
