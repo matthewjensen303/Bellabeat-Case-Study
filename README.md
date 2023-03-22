@@ -1,3 +1,5 @@
+### Google Data Analytics Bellabeat Case Study
+
 Author: Matthew Jensen 
 
 Date: 3/18/2023
@@ -380,7 +382,8 @@ weekday_calories <- ggplot(weekday_activity) +
 weekday_calories
 ```
 
-bellabeatgit_files/figure-markdown_github/unnamed-chunk-8-1.png
+![weekcal](https://user-images.githubusercontent.com/68298090/227016299-545f48e2-47ff-421f-b305-05c5f852b252.png)
+
 
 This graph examines if there is any particular day that people burn the
 most calories. While there isn’t a big difference, Saturday being the
@@ -397,8 +400,8 @@ weekday_steps <- ggplot(weekday_activity) +
 
 weekday_steps
 ```
+![weekstep](https://user-images.githubusercontent.com/68298090/227016283-d4e90ebf-4c92-429c-83ca-40eb4b3eba9f.png)
 
-bellabeatgit_files/figure-markdown_github/unnamed-chunk-9-1.png
 
 This graph plots the relationship between a person’s daily steps with
 each day of the week to show which day has the most activity. This does
@@ -417,7 +420,8 @@ weekday_sleep <- ggplot(weekday_activity) +
 weekday_sleep
 ```
 
-bellabeatgit_files/figure-markdown_github/unnamed-chunk-10-1.png
+![weeksleep](https://user-images.githubusercontent.com/68298090/227016237-964e9c88-deb8-4d46-be18-e2ea499a9523.png)
+
 
 This graph also shows which days of the week people typically sleep the
 most, graphing this can show which day or days people are the most well
@@ -438,7 +442,8 @@ labs(title="Daily Steps vs. Calories Burned", x="Total Steps", y="Calories Burne
 cal_burned
 ```
 
-bellabeatgit_files/figure-markdown_github/unnamed-chunk-11-1.png
+![stepsvscal](https://user-images.githubusercontent.com/68298090/227016200-c118b583-f633-482f-bf98-1fc8e02332d3.png)
+
 
 This graph shows the correlation between the amount of steps a person
 has in a day and how many calories they burn. On average, when they take
@@ -459,8 +464,8 @@ labs(title="Total Steps vs Daily Activity", x="Total Daily Steps", y="Time Activ
 
 active_steps
 ```
+![stepsvsactivity](https://user-images.githubusercontent.com/68298090/227016173-a9482631-0698-4c27-8a67-56e997df89f9.png)
 
-bellabeatgit_files/figure-markdown_github/unnamed-chunk-12-1.png
 
 ``` r
 # merge daily activity with hourly steps by the Id and date
@@ -510,7 +515,8 @@ labs(title="Average Steps per Hour", x="Hour", y="Average Steps")
 steps_per_hour
 ```
 
-bellabeatgit_files/figure-markdown_github/unnamed-chunk-14-1.png
+![hourstep](https://user-images.githubusercontent.com/68298090/227016106-24b1a64f-5b3c-46f3-af0a-f45432082e96.png)
+
 
 This graph illustrates the time of day in which people are most active.
 When people are asleep in the early morning there isn’t much activity
@@ -566,7 +572,8 @@ labs(title="Average Calories Burned vs Time of Day", y="Average Calories Burned"
 bar_calories
 ```
 
-bellabeatgit_files/figure-markdown_github/unnamed-chunk-16-1.png
+![hourcal](https://user-images.githubusercontent.com/68298090/227016025-0ce2e8e7-5cc3-4d65-88bf-119b7f9ee170.png)
+
 
 This graph illustrates what time of day people are burning the most
 calories. One of the most interesting things is how much people are
@@ -586,7 +593,8 @@ sed_minutes <- ggplot(weekday_activity) +
 sed_minutes
 ```
 
-bellabeatgit_files/figure-markdown_github/unnamed-chunk-17-1.png
+![weeksed](https://user-images.githubusercontent.com/68298090/227015967-ad1be0fb-72c0-40d6-8fc2-2d45caa3395e.png)
+
 
 This graph shows how much time people are sedentay, or not staying
 active during the week. It is spread out evenly, however Tuesday and
@@ -610,7 +618,8 @@ activity_type <- paste(activity_type, "%", sep="")
 pie(slices, labels = activity_type, col = rainbow(length(activity_type)), main = "Percentage of Activity Type in Minutes")
 ```
 
-bellabeatgit_files/figure-markdown_github/unnamed-chunk-18-1.png
+![activepie](https://user-images.githubusercontent.com/68298090/227015911-35efd84c-6a8f-47cc-a438-a77fa5afd85e.png)
+
 
 This graph illustrates how most of the time people are spending is
 sedentary and not doing any activity. Lightly active is the type of
