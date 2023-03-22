@@ -1,0 +1,367 @@
+---
+title: "Bellabeat Case Study"
+output: html_document
+---
+
+Author: Matthew Jensen
+Date: 3/18/2023
+
+### Introduction
+
+Bellabeat is a high-tech company that manufactures health-focused smart products and develops beautifully designed technology that informs and inspires women around the world. Collecting data on activity, sleep, stress, and reproductive health has allowed Bellabeat to empower women with knowledge about their own health and habits. Since it was founded in 2013, Bellabeat has grown rapidly and quickly positioned itself as a tech-driven wellness company for women. By 2016, Bellabeat had opened offices around the world and launched multiple products. Bellabeat products became available through a growing number of online retailers in addition to their own e-commerce channel on their website. The company has invested in traditional advertising media, such as radio, out-of-home billboards, print, and television, but focuses on digital marketing extensively. Bellabeat invests year-round in Google Search, maintaining active Facebook and Instagram pages, and consistently engages consumers on Twitter. Additionally, Bellabeat runs video ads on Youtube and display ads on the Google Display Network to support campaigns around key marketing dates.
+
+
+### Ask 
+
+*What is the problem you are trying to solve?*
+
+Finding patterns about the users of the smart devices daily habits to see if there are any 
+edges and/or angles that will be useful to Bellabeat’s marketing strategy. 
+
+*How can your insights drive business decisions?*
+
+The data may contain insights that will be useful to the company in the way that they advertise their products. It can also help the company see when and how their product is being used.
+ 
+### Prepare
+
+The data used in this case study is from FitBit Fitness Tracker Data | Kaggle. It contains data collected from 30 fitbit users that consented to their data being recorded. It includes information about daily steps, heart rate, physical activity, sleeping habits, and general daily activity.
+
+*Where is your data stored?*
+
+The dataset was downloaded onto my computer from Kaggle at the site linked above. 
+
+*How is the data organized?*
+
+The data is organized throughout 18 files on a zip file. The files are:
+
+- dailyActivity_merged.csv
+- dailyCalories_merged.csv
+- dailyIntensities_merged.csv
+- dailySteps_merged.csv
+- Heartrate_seconds_merged.csv
+- hourlyCalories_merged.csv
+- hourlyIntensities_merged.csv
+- hourlySteps_merged.csv
+- minuteCaloriesNarrow_merged.csv
+- minuteCaloriesWide_merged.csv
+- minuteIntensitiesNarrow_merged.csv
+- minuteIntensitiesWide_merged.csv
+- minuteMETsNarrow_merged.csv
+- minuteSleep_merged.csv
+- minuteStepsNarrow_merged.csv
+- minuteStepsWide_merged.csv
+- sleepDay_merged.csv
+- weightLogInfo_merged.csv
+
+*Is it in long or wide format?*
+
+The data is in wide format. 
+
+*Does your data ROCCC?*
+
+For a case study where we will be analyzing data, we want the data to be unbiased and credible, and that it fits ROCCC. ROCCC stands for reliable, original, comprehensive, current, and cited. Using it is the best way to figure out if the data is useful and will not give misleading results. 
+
+Reliable: The data is from real FitBit users which is reliable. However, surveying only 30 people over a month is too small of a sample size to find any clear trends in the data. The end results might be a little noisy which could be improved upon if more people were surveyed (for example, 100-1000 people) and the data was collected over a longer period of time (3-6 months). 
+
+Original: The data was submitted via Amazon Mechanical Turk. It is original because it comes from real people and is credible because it is quantitative data that comes from the Fitbit the person is using. However, it would have been better if the data had come from the FitBit device itself and not a survey. 
+
+Comprehensive: The data is somewhat comprehensive. It does a good job of tracking things like sleep and user activity which can give a good idea of how the people surveyed are using their devices. However, the concerns about reliability also apply here because the data could use a longer time period and a larger sample size to remove noise from the dataset. People’s habits change a lot from month to month, and even though the data gives a clear picture of habits of the people surveyed in April 2016, it might not be for another season where the weather is worse or the days are shorter or longer. 
+
+Current: The data is from March 2016 to May 2016. This data would have been useful in 2016 or 2017, but at this point it might be outdated. Due to the rapid developments in technology it could be argued that this data is obsolete due to FitBit updating and improving their devices over the past 6 years. However, it’s not too far in the past therefore it could still be worth a look. 
+
+Cited: Yes, the data is cited. 
+
+Overall, the data itself is decent however it could be updated and improved upon. It doesn’t check every box of ROCCC yet there’s still enough useful data to complete the case study. The dataset’s strength is that it is original and cited, yet it could be a little more reliable and comprehensive.  
+
+
+
+### Process
+
+I chose R Studio to complete this case study in because I was familiar with it and thought that the graphing features through the ggplot library would work well with the data that I had been given. 
+
+I also decided the files that I thought would give the clearest picture on trends within the data for Bellabeat:
+
+- dailyActivity_merged
+- hourlyCalories_merged
+- hourlySteps_merged
+- sleepDay_merged
+
+The first step I took is loading in the libraries that I need, then I read in the files into R:
+
+```{r}
+library(tidyverse)
+library(here)
+library(skimr)
+library(janitor)
+library(lubridate)
+library(ggrepel)
+library(ggplot2)
+library(reshape2)
+library(scales)
+```
+
+```{r}
+# read in files
+
+daily_activity <- read.csv("/Users/Matthew/Documents/fitbit/Fitabase Data 4.12.16-5.12.16/dailyActivity_merged.csv")
+hourly_calories <- read.csv("/Users/Matthew/Documents/fitbit/Fitabase Data 4.12.16-5.12.16/hourlyCalories_merged.csv")
+hourly_steps <- read.csv('/Users/Matthew/Documents/fitbit/Fitabase Data 4.12.16-5.12.16/hourlySteps_merged.csv')
+sleep_day <- read.csv("/Users/Matthew/Documents/fitbit/Fitabase Data 4.12.16-5.12.16/sleepDay_merged.csv")
+```
+
+The next step in cleaning the dataset is getting rid of any duplicates and dropping any blank cells.
+
+```{r}
+# Removing duplicates and dropping NA 
+
+daily_activity <- daily_activity %>% 
+    drop_na()
+
+hourly_calories <- hourly_calories %>% 
+    drop_na()
+
+hourly_steps <- hourly_steps %>% 
+    drop_na()
+
+sleep_day <- sleep_day %>% 
+    drop_na() %>% 
+    unique()
+```
+
+Then I converted the time data in the ActivityHour, ActivityDate, and Sleep_day variable in each of the files to date/time and set new columns for month, date, and time.
+
+```{r}
+# Convert ActivityDate column to POSIXct format
+daily_activity$ActivityDate <- as.POSIXct(daily_activity$ActivityDate, format="%m/%d/%Y", tz=Sys.timezone())
+
+# Create new columns for date, month, day, and weekday
+daily_activity <- daily_activity %>% 
+  mutate(date = format(ActivityDate, format = "%m/%d/%y"),
+         month = format(ActivityDate, format = "%B"),
+         day = format(ActivityDate, format = "%d"),
+         weekday = format(ActivityDate, format = "%A"))
+
+# Convert hourly calories to POSIXct format
+hourly_calories$ActivityHour=as.POSIXct(hourly_calories$ActivityHour, format="%m/%d/%Y %I:%M:%S %p", tz=Sys.timezone())
+hourly_calories$time <- format(hourly_calories$ActivityHour, format = "%H:%M:%S")
+hourly_calories$date <- format(hourly_calories$ActivityHour, format = "%m/%d/%y")
+hourly_calories$month <- format(hourly_calories$ActivityHour, format = "%B")
+
+# Convert hourly steps to POSIXct format
+hourly_steps$ActivityHour=as.POSIXct(hourly_calories$ActivityHour, format="%m/%d/%Y %I:%M:%S %p", tz=Sys.timezone())
+hourly_steps$time <- format(hourly_calories$ActivityHour, format = "%H:%M:%S")
+hourly_steps$date <- format(hourly_calories$ActivityHour, format = "%m/%d/%y")
+hourly_steps$month <- format(hourly_calories$ActivityHour, format = "%B")
+
+# Convert the SleepDay column to POSIXct format
+sleep_day$SleepDay <- as.POSIXct(sleep_day$SleepDay, format="%m/%d/%Y %I:%M:%S %p", tz=Sys.timezone())
+
+# Create new columns for date and month
+sleep_day <- sleep_day %>% 
+  mutate(date = format(SleepDay, format = "%m/%d/%y"),
+         month = format(SleepDay, format = "%B"))
+```
+
+Attached below is the data read in and cleaned from the four files:
+
+```{r}
+head(daily_activity)
+head(hourly_calories)
+head(hourly_steps)
+head(sleep_day)
+```
+
+After that, I merged the daily_activity dataframe with the sleep_day dataframe by the ID and date to find the averages of how much people slept. Later on I did the same to find the average calories and steps per day of the week. 
+
+```{r}
+# merge daily activity with sleep data by the Id and date
+combined_activity <- merge(daily_activity, sleep_day, by=c ("Id", "date"))
+combined_activity <- combined_activity %>% select(-c("month.y"))
+glimpse(combined_activity)
+```
+
+```{r}
+# new dataframe for measuring average 
+
+dfweekdaysleep <- combined_activity %>%
+  mutate(weekday = weekdays(ActivityDate))
+
+# Create vector for the weekdays
+dfweekdaysleep$weekday <-ordered(dfweekdaysleep$weekday, levels=c("Monday", "Tuesday", "Wednesday", "Thursday",
+"Friday", "Saturday", "Sunday"))
+
+weekday_activity <- dfweekdaysleep%>%
+  group_by(weekday) %>%
+  summarize(daily_steps = mean(TotalSteps), daily_calories = mean(Calories), daily_sedentary = mean(SedentaryMinutes), daily_sleep = mean(TotalMinutesAsleep)/60)
+
+head(weekday_activity)
+```
+
+```{r}
+# average calories in a day
+
+weekday_calories <- ggplot(weekday_activity) +
+    geom_col(aes(weekday, daily_calories), fill = "darkgreen") +
+    labs(title = "Daily calories burned per day of week", x= "", y = "") +
+    theme(axis.text.x = element_text(angle = 90,vjust = 0.5, hjust = 0.5))
+
+weekday_calories
+```
+
+This graph examines if there is any particular day that people burn the most calories. While there isn’t a big difference, Saturday being the day with the most calories burned makes sense because of it being the weekend where people might have more free time to get active.
+
+```{r}
+# average steps in a day 
+
+weekday_steps <- ggplot(weekday_activity) +
+    geom_col(aes(weekday, daily_steps), fill = "orangered4") +
+    labs(title = "Daily steps per day of week", x= "", y = "") +
+    theme(axis.text.x = element_text(angle = 90,vjust = 0.5, hjust = 0.5))
+
+weekday_steps
+```
+
+This graph plots the relationship between a person’s daily steps with each day of the week to show which day has the most activity. This does compare well to the last graph as the days where people took more steps are also the days where people burned more calories. The top 3 days for steps and calories burned are both Saturday, Monday, and Tuesday.
+
+```{r}
+# average sleep per day of week 
+
+weekday_sleep <- ggplot(weekday_activity) +
+    geom_col(aes(weekday, daily_sleep), fill = "dodgerblue4") +
+    labs(title = "Average hours asleep per day of week", x= "", y = "") +
+    theme(axis.text.x = element_text(angle = 90,vjust = 0.5, hjust = 0.5))
+
+weekday_sleep
+```
+
+This graph also shows which days of the week people typically sleep the most, graphing this can show which day or days people are the most well rested, as well as see if people are getting the recommended amount of sleep each night. The recommended amount of sleep is at least 6-8 hours per night. While the people surveyed are on the low end of that recommendation, they are still getting enough on average. However this graph does not show anything about sleep leading to more step activity or burning calories. 
+
+```{r}
+# calories burned for every step taken
+
+cal_burned <- ggplot(data=daily_activity, mapping=aes(x=TotalSteps, y=Calories)) + 
+geom_point(color="seagreen4") + geom_smooth(method = 'lm', formula = y ~ x) + 
+labs(title="Daily Steps vs. Calories Burned", x="Total Steps", y="Calories Burned")
+
+cal_burned
+```
+
+This graph shows the correlation between the amount of steps a person has in a day and how many calories they burn. On average, when they take more steps, they burn more calories. This is shown by the blue line of best fit. This also goes along with the previous graphs where the days on which more steps were taken were the ones with more calories burned. 
+
+```{r}
+# Create new df with daily active minutes
+total_activity <- daily_activity %>%
+mutate(TotalActiveMinutes = VeryActiveMinutes+FairlyActiveMinutes+LightlyActiveMinutes)
+
+# Plot relationship between number of daily steps and minutes active during the day
+active_steps <- ggplot(data=total_activity, aes(x=TotalSteps, y=TotalActiveMinutes)) + 
+geom_point(color="dodgerblue4") + 
+geom_smooth(method = 'lm', formula = y ~ x) +
+labs(title="Total Steps vs Daily Activity", x="Total Daily Steps", y="Time Active in Minutes")
+
+active_steps
+```
+
+
+```{r}
+# merge daily activity with hourly steps by the Id and date
+step_activity <- merge(daily_activity, hourly_steps, by=c('Id', 'date'))
+glimpse(step_activity)
+```
+
+
+```{r}
+# steps by hour
+
+avg_steps <- step_activity %>%
+  group_by(time) %>%
+  drop_na() %>%
+  summarise(mean_total_int = mean(StepTotal))
+
+steps_per_hour <- ggplot(data=avg_steps, aes(x=time, y=mean_total_int)) + 
+geom_bar(stat = "identity", fill="blue") +
+theme(axis.text.x = element_text(angle = 90)) +
+labs(title="Average Steps per Hour", x="Hour", y="Average Steps")
+
+steps_per_hour
+
+```
+
+This graph illustrates the time of day in which people are most active. When people are asleep in the early morning there isn’t much activity however as the day goes on people become more active. There are also relative peaks around noon (lunchtime) and 4 pm to 7 pm (dinnertime). 
+
+```{r}
+# merge daily activity with hourly calories by the Id and date
+calorie_activity <- merge(daily_activity, hourly_calories, by=c('Id', 'date'))
+glimpse(calorie_activity)
+```
+
+
+```{r}
+# calories by hour 
+
+hourly_cal <- calorie_activity %>%
+  group_by(time) %>%
+  drop_na() %>%
+  summarise(mean_total_int = mean(Calories.y))
+
+# Plot relationship between average intensity and time of day
+bar_calories <- ggplot(data=hourly_cal, aes(x=time, y=mean_total_int)) + 
+geom_bar(stat = "identity", fill='purple') +
+theme(axis.text.x = element_text(angle = 90)) +
+labs(title="Average Calories Burned vs Time of Day", y="Average Calories Burned", x="Hour of day")
+
+bar_calories
+```
+
+
+This graph illustrates what time of day people are burning the most calories. One of the most interesting things is how much people are presumably burning calories in their sleep. This graph also correlated with the last graph of hourly steps, where the most calories are getting burned around dinnertime. The number of calories burned also increases throughout the day, similar to the last graph. 
+
+
+```{r}
+# Graph of sedentary minutes 
+
+sed_minutes <- ggplot(weekday_activity) +
+    geom_col(aes(weekday, daily_sedentary), fill = "orangered4") +
+    labs(title = "Sedentary Minutes Per Day of Week", x= "", y = "") +
+    theme(axis.text.x = element_text(angle = 90,vjust = 0.5, hjust = 0.5))
+
+sed_minutes
+```
+
+This graph shows how much time people are sedentay, or not staying active during the week. It is spread out evenly, however Tuesday and Friday are the least active days, with the weekend having the least amount of sedentary minutes. 
+
+
+```{r}
+#slicing the individual segments
+veryactive_min <- sum(daily_activity$VeryActiveMinutes)
+fairlyactive_min <- sum(daily_activity$FairlyActiveMinutes)
+lightlyactive_min <- sum(daily_activity$LightlyActiveMinutes)
+sedentary_min <- sum(daily_activity$SedentaryMinutes)
+total_min <- veryactive_min + fairlyactive_min + lightlyactive_min + sedentary_min
+
+# plotting the pie
+slices <- c(veryactive_min,fairlyactive_min,lightlyactive_min,sedentary_min)
+activity_type <- c("Very Active","Fairly Active","Lightly Active","Sedentary")
+active_percentage <- round(slices/sum(slices)*100)
+activity_type <- paste(activity_type, active_percentage)
+activity_type <- paste(activity_type, "%", sep="")
+pie(slices, labels = activity_type, col = rainbow(length(activity_type)), main = "Percentage of Activity Type in Minutes")
+```
+
+This graph illustrates how most of the time people are spending is sedentary and not doing any activity. Lightly active is the type of activity that people do the most, vastly more than both fairly and very active, which have a very small chunk of all the activity that is tracked.  
+
+### Act
+
+Trends shown within the data:
+
+- Saturday is the day of the week with the most steps taken and the most calories burned.
+- The hour of the day with the most calories burned is 7 pm, and the people surveyed generally get more exercise around the lunchtime (12-2 pm) and dinnertime hours.
+- People are still burning calories when they are asleep as well as the less active times of the day. 
+- Generally, the more steps a person takes the more calories they will burn. 
+
+Recommendations:
+
+- Pool data from a larger and more diverse dataset.
+- Create a feature where users can compete and compare their statistics to gain the most steps or be the most active with their friends and family, somewhat like a game. 
+- Partner with a health company to develop personal exercise and sleep plans for specific people. 
+
